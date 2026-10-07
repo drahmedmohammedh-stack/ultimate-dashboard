@@ -9,18 +9,20 @@ import {
   ArrowDownRight,
   Clock,
   Zap,
+  Target,
 } from 'lucide-react';
-import { tasksData } from '../data/tasks';
+import { TodoistTask } from '../services/todoist';
 import { financeData } from '../data/finance';
 import { clientsData } from '../data/clients';
 import { fitnessData } from '../data/fitness';
 
 interface DashboardProps {
   setActiveView: (view: ViewType) => void;
+  tasks: TodoistTask[];
 }
 
-export default function Dashboard({ setActiveView }: DashboardProps) {
-  const pendingTasks = tasksData.filter((t) => !t.completed).length;
+export default function Dashboard({ setActiveView, tasks }: DashboardProps) {
+  const pendingTasks = tasks.filter((t: TodoistTask) => !t.is_completed).length;
   const totalIncome = financeData.income;
   const totalExpenses = financeData.expenses;
   const activeClients = clientsData.filter((c) => c.status === 'active').length;
@@ -72,7 +74,7 @@ export default function Dashboard({ setActiveView }: DashboardProps) {
     orange: { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20' },
   };
 
-  const upcomingTasks = tasksData.filter((t) => !t.completed).slice(0, 4);
+  const upcomingTasks = tasks.filter((t: TodoistTask) => !t.is_completed).slice(0, 4);
   const topClients = clientsData.filter((c) => c.status === 'active').slice(0, 3);
 
   return (
@@ -140,18 +142,20 @@ export default function Dashboard({ setActiveView }: DashboardProps) {
               >
                 <div
                   className={`w-2 h-2 rounded-full shrink-0 ${
-                    task.priority === 'high'
+                    task.priority === 4
                       ? 'bg-red-400'
-                      : task.priority === 'medium'
+                      : task.priority === 3 || task.priority === 2
                       ? 'bg-yellow-400'
                       : 'bg-emerald-400'
                   }`}
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white/90 truncate">{task.title}</p>
-                  <p className="text-[11px] text-white/30">{task.project}</p>
+                  <p className="text-sm text-white/90 truncate">{task.content}</p>
+                  <p className="text-[11px] text-white/30">Priority {task.priority}</p>
                 </div>
-                <span className="text-[11px] text-white/30 shrink-0">{task.dueDate}</span>
+                <span className="text-[11px] text-white/30 shrink-0">
+                  {task.due?.string || 'No date'}
+                </span>
               </div>
             ))}
           </div>
@@ -197,7 +201,42 @@ export default function Dashboard({ setActiveView }: DashboardProps) {
       </div>
 
       {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        {/* Eisenhower Matrix Quick View */}
+        <div className="bg-[#111916] border border-white/5 rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Target size={16} className="text-red-400" />
+              <h2 className="text-sm font-semibold text-white">Priority Matrix</h2>
+            </div>
+            <button
+              onClick={() => setActiveView('eisenhower')}
+              className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              Open →
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20">
+              <p className="text-[10px] text-red-400 font-medium">Do First</p>
+              <p className="text-lg font-bold text-white">{tasks.filter(t => !t.is_completed && t.priority === 4).length}</p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+              <p className="text-[10px] text-blue-400 font-medium">Schedule</p>
+              <p className="text-lg font-bold text-white">{tasks.filter(t => !t.is_completed && t.priority === 3).length}</p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+              <p className="text-[10px] text-yellow-400 font-medium">Delegate</p>
+              <p className="text-lg font-bold text-white">{tasks.filter(t => !t.is_completed && t.priority === 2).length}</p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+              <p className="text-[10px] text-white/40 font-medium">Eliminate</p>
+              <p className="text-lg font-bold text-white">{tasks.filter(t => !t.is_completed && t.priority === 1).length}</p>
+            </div>
+          </div>
+          <p className="text-[10px] text-white/20 mt-2">Based on Todoist priority levels</p>
+        </div>
+
         {/* Fitness Quick View */}
         <div className="bg-[#111916] border border-white/5 rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
