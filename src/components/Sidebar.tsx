@@ -2,6 +2,7 @@ import { ViewType } from '../App';
 import {
   LayoutDashboard,
   CheckSquare,
+  Target,
   Dumbbell,
   DollarSign,
   Users,
@@ -21,6 +22,7 @@ interface SidebarProps {
 const navItems: { id: ViewType; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
   { id: 'tasks', label: 'Tasks', icon: <CheckSquare size={20} /> },
+  { id: 'eisenhower', label: 'Eisenhower Matrix', icon: <Target size={20} /> },
   { id: 'fitness', label: 'Fitness', icon: <Dumbbell size={20} /> },
   { id: 'finance', label: 'Finance', icon: <DollarSign size={20} /> },
   { id: 'clients', label: 'Clients', icon: <Users size={20} /> },

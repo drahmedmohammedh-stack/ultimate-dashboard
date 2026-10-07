@@ -1,23 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import TasksView from './components/TasksView';
+import EisenhowerMatrix from './components/EisenhowerMatrix';
 import FitnessView from './components/FitnessView';
 import FinanceView from './components/FinanceView';
 import ClientsView from './components/ClientsView';
+import { fetchTasks, TodoistTask } from './services/todoist';
 
-export type ViewType = 'dashboard' | 'tasks' | 'fitness' | 'finance' | 'clients';
+export type ViewType = 'dashboard' | 'tasks' | 'eisenhower' | 'fitness' | 'finance' | 'clients';
 
 export default function App() {
   const [activeView, setActiveView] = useState<ViewType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [tasks, setTasks] = useState<TodoistTask[]>([]);
+
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const data = await fetchTasks();
+        setTasks(data);
+      } catch (err) {
+        console.error('Failed to load tasks:', err);
+      }
+    };
+    loadTasks();
+  }, []);
 
   const renderView = () => {
     switch (activeView) {
       case 'dashboard':
-        return <Dashboard setActiveView={setActiveView} />;
+        return <Dashboard setActiveView={setActiveView} tasks={tasks} />;
       case 'tasks':
         return <TasksView />;
+      case 'eisenhower':
+        return <EisenhowerMatrix tasks={tasks} />;
       case 'fitness':
         return <FitnessView />;
       case 'finance':
@@ -25,7 +42,7 @@ export default function App() {
       case 'clients':
         return <ClientsView />;
       default:
-        return <Dashboard setActiveView={setActiveView} />;
+        return <Dashboard setActiveView={setActiveView} tasks={tasks} />;
     }
   };
 
