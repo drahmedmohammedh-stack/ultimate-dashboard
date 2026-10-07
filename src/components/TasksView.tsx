@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CheckSquare, Plus, Filter, ExternalLink, Check, Circle, RefreshCw, AlertCircle } from 'lucide-react';
-import { fetchTasks, completeTask, TodoistTask } from '../services/todoist';
+import { fetchTasks, completeTask, TodoistTask, isDemoMode } from '../services/todoist';
 
 export default function TasksView() {
   const [tasks, setTasks] = useState<TodoistTask[]>([]);
@@ -105,6 +105,19 @@ export default function TasksView() {
 
   return (
     <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">
+      {/* Demo Mode Banner */}
+      {isDemoMode(tasks) && (
+        <div className="mb-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 flex items-start gap-2">
+          <span className="text-yellow-400 text-sm">⚠️</span>
+          <div className="flex-1">
+            <p className="text-xs text-yellow-400 font-medium">Demo Mode</p>
+            <p className="text-[11px] text-white/50 mt-0.5">
+              Showing sample tasks. Deploy to Vercel to connect your real Todoist data.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -113,7 +126,7 @@ export default function TasksView() {
             <h1 className="text-xl font-bold text-white">Tasks</h1>
           </div>
           <p className="text-sm text-white/40">
-            Synced with Todoist · {completedCount}/{totalCount} completed
+            {isDemoMode(tasks) ? 'Demo Data' : 'Synced with Todoist'} · {completedCount}/{totalCount} completed
           </p>
         </div>
         <div className="flex items-center gap-2">
