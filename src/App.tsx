@@ -22,6 +22,7 @@ export default function App() {
         setTasks(data);
       } catch (err) {
         console.error('Failed to load tasks:', err);
+        // Keep empty array as fallback - views will show their own error states
       }
     };
     loadTasks();

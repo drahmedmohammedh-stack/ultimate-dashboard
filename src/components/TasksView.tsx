@@ -80,14 +80,22 @@ export default function TasksView() {
       <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-5 flex items-start gap-3">
           <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
-          <div>
+          <div className="flex-1">
             <p className="text-sm text-red-400 font-medium mb-1">Connection Error</p>
-            <p className="text-xs text-white/60">{error}</p>
+            <p className="text-xs text-white/60 mb-3">{error}</p>
+            <div className="bg-white/5 rounded-lg p-3 mb-3">
+              <p className="text-[11px] text-white/40 mb-1">Possible causes:</p>
+              <ul className="text-[11px] text-white/40 space-y-0.5 list-disc list-inside">
+                <li>CORS proxy may be temporarily unavailable</li>
+                <li>API token may be invalid or expired</li>
+                <li>Network connectivity issue</li>
+              </ul>
+            </div>
             <button
               onClick={loadTasks}
-              className="mt-3 px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 text-xs hover:bg-red-500/30 transition-all"
+              className="px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 text-xs hover:bg-red-500/30 transition-all"
             >
-              Retry
+              Try Again
             </button>
           </div>
         </div>
